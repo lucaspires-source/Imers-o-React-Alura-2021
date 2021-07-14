@@ -4,7 +4,7 @@ import {AlurakutProfileSidebarMenuDefault} from '../../lib/AlurakutCommons'
 const ProFileSideBar = (props) => {
 
     return (
-      <Box>
+      <Box as="aside">
         <img
           src={`https://github.com/${props.githubUser}.png`}
           style={{ borderRadius: "8px" }}

@@ -1,13 +1,37 @@
-import {useState} from 'react'
+import {useState,useEffect} from 'react'
 
 import MainGrid from "../src/components/MainGrid";
 import Box from "../src/components/Box";
+import ProfileFollowers from "../src/components/ProfileFollowers";
 import ProFileSideBar from "../src/components/ProfileSideBar";
 import { ProfileRelationsBoxWrapper } from "../src/components/ProfileRelations";
 import {
   AlurakutMenu,
   OrkutNostalgicIconSet,
 } from "../src/lib/AlurakutCommons";
+
+const ProfileRelationsBox = (props) => {
+  return (
+    <ProfileRelationsBoxWrapper>
+      <h2 className="smallTitle">
+        {props.title} ({props.items.length})
+      </h2>
+      <ul>
+        {/* {seguidores.map((itemAtual) => {
+          return (
+            <li key={itemAtual}>
+              <a href={`https://github.com/${itemAtual}.png`}>
+                <img src={itemAtual.image} />
+                <span>{itemAtual.title}</span>
+              </a>
+            </li>
+          )
+        })} */}
+      </ul>
+    </ProfileRelationsBoxWrapper>
+  )
+}
+
 
 export default function Home() {
   const githubUser = "lucaspires-source";
@@ -40,6 +64,21 @@ export default function Home() {
     let novasComunidades = [...comunidades, comunidade]
     setComunidades(novasComunidades)
   };
+
+
+  const [seguidores, setSeguidores] = useState([]); 
+  
+  
+  useEffect(() => {
+    fetch(`https://api.github.com/users/${githubUser}/followers`)
+    .then((res) => {
+      return res.json();
+    })
+    .then((resCompleta) => {
+      setSeguidores(resCompleta);
+    })
+  }, [])
+
   return (
     <>
       <AlurakutMenu />
@@ -78,6 +117,7 @@ export default function Home() {
           className="profileRelationsArea"
           style={{ gridArea: "profileRelationsArea" }}
         >
+          <ProfileFollowers title="Seguidores" items={seguidores} />
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
               Pessoas da comunidade ({pessoasFavoritas.length})
