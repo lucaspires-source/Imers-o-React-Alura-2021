@@ -1,4 +1,4 @@
-import {useState,useEffect} from 'react'
+import { useState, useEffect } from "react";
 
 import MainGrid from "../src/components/MainGrid";
 import Box from "../src/components/Box";
@@ -24,37 +24,71 @@ export default function Home() {
     "didiraja",
   ];
 
-  const [comunidades,setComunidades] = useState([{
-    id:new Date(),
-    title: "Ser cruzeirense é comorbidade",
-    image: "https://conteudo.imguol.com.br/c/esporte/05/2019/11/29/thiago-neves-do-cruzeiro-1575059330870_v2_450x337.jpg"
-  }])
+  const [comunidades, setComunidades] = useState([]);
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formDados = new FormData(e.target)
+    const formDados = new FormData(e.target);
 
     const comunidade = {
-      id:new Date(),
-      title:formDados.get('title'),
-      image:formDados.get('image'),
-    }
-    let novasComunidades = [...comunidades, comunidade]
-    setComunidades(novasComunidades)
+      title: formDados.get("title"),
+      imageUrl: formDados.get("image"),
+      creatorSlug:githubUser
+    };
+
+    fetch('/api/comunidades',{
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body:JSON.stringify(comunidade)
+    })
+    .then(async(res) => {
+      const data =  await res.json()
+      const comunidade = dados.registroCriado
+      let novasComunidades = [...comunidades, comunidade];
+      setComunidades(novasComunidades);
+    })
+
+
   };
 
+  const [seguidores, setSeguidores] = useState([]);
 
-  const [seguidores, setSeguidores] = useState([]); 
-  
-  
   useEffect(() => {
     fetch(`https://api.github.com/users/${githubUser}/followers`)
-    .then((res) => {
-      return res.json();
+      .then((res) => {
+        return res.json();
+      })
+      .then((resCompleta) => {
+        setSeguidores(resCompleta);
+      });
+
+    fetch("https://graphql.datocms.com/", {
+      method: "POST",
+      headers: {
+        'Authorization': "bb208ec473a32039ad5d9cef6a7d96",
+        "Content-Type": "application/json",
+        'Accept': "application/json",
+      },
+      body: JSON.stringify({
+        query: `query{
+      allCommunities {
+        id
+        title
+        imageUrl
+        creatorSlug
+      }
+    }
+      `,
+      }),
     })
-    .then((resCompleta) => {
-      setSeguidores(resCompleta);
-    })
-  }, [])
+      .then((res) => res.json())
+      .then((resCompleta) => {
+        const comunidades = resCompleta.data.allCommunities;
+        setComunidades(comunidades);
+      });
+    console;
+  }, []);
 
   return (
     <>
@@ -103,7 +137,7 @@ export default function Home() {
             <ul>
               {pessoasFavoritas.map((itemAtual) => {
                 return (
-                  <li  key={itemAtual}>
+                  <li key={itemAtual}>
                     <a href={`/users/${itemAtual}`}>
                       <img src={`https://github.com/${itemAtual}.png`} />
                       <span>{itemAtual}</span>
@@ -121,7 +155,7 @@ export default function Home() {
                 return (
                   <li>
                     <a href={`/users/${itemAtual.title}`} key={itemAtual.id}>
-                      <img src={itemAtual.image} alt={itemAtual.title}/>
+                      <img src={itemAtual.imageUrl} alt={itemAtual.title} />
                       <span>{itemAtual.title}</span>
                     </a>
                   </li>
