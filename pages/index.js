@@ -44,7 +44,7 @@ export default function Home() {
     })
     .then(async(res) => {
       const data =  await res.json()
-      const comunidade = dados.registroCriado
+      const comunidade = data.registroCriado
       let novasComunidades = [...comunidades, comunidade];
       setComunidades(novasComunidades);
     })
@@ -86,8 +86,7 @@ export default function Home() {
       .then((resCompleta) => {
         const comunidades = resCompleta.data.allCommunities;
         setComunidades(comunidades);
-      });
-    console;
+      })
   }, []);
 
   return (
