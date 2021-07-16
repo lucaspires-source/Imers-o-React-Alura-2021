@@ -163,7 +163,6 @@ AlurakutMenu.Logo = styled.img`
 `;
 
 function AlurakutMenuProfileSidebar(props) {
-  console.log(props)
   return (
     <div className="alurakutMenuProfileSidebar">
       <div>
